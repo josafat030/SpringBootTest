@@ -28,20 +28,20 @@ public class OfferController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<OfferDTO> add(@Valid OfferDTO offerDTO) {
+    public ResponseEntity<OfferDTO> add(@Valid @RequestBody OfferDTO offerDTO) {
         offerDTO.setId(null);
         return new ResponseEntity<>(offerService.save(offerDTO), HttpStatus.OK);
     }
 
     @PutMapping("/")
-    public ResponseEntity<OfferDTO> edit(@Valid OfferDTO offerDTO) {
+    public ResponseEntity<OfferDTO> edit(@Valid @RequestBody OfferDTO offerDTO) {
         // Null IDs are not allowed
         return new ResponseEntity<>(offerService.save(offerDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<OfferDTO> delete(Long id) {
-        return new ResponseEntity<>(new OfferDTO(), HttpStatus.OK);
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        return new ResponseEntity<>(offerService.delete(id), HttpStatus.OK);
     }
 
 }

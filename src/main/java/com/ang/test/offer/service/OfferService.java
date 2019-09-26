@@ -2,6 +2,7 @@ package com.ang.test.offer.service;
 
 import com.ang.test.offer.domain.Offer;
 import com.ang.test.offer.domain.Product;
+import com.ang.test.offer.dto.Errors;
 import com.ang.test.offer.dto.OfferDTO;
 import com.ang.test.offer.dto.ProductDTO;
 import com.ang.test.offer.repository.OfferRepository;
@@ -25,10 +26,13 @@ public class OfferService {
     }
 
     public List<Offer> findAll(Date activeOn) {
-        return offerRepository.findAll();
+        return offerRepository.findAllByDate(activeOn);
     }
 
     public List<OfferDTO> findAllDTO(Date activeOn) {
+    	if(activeOn==null){
+    		activeOn=new Date();
+    	}
         List<Offer> offers = findAll(activeOn);
         if(offers.isEmpty())
             return new ArrayList<>();
@@ -48,6 +52,18 @@ public class OfferService {
     }
 
     public OfferDTO save(OfferDTO offerDTO) {
+    	if(offerDTO==null || offerDTO.getId()==null) {
+    		OfferDTO error=new OfferDTO();
+    		Errors errorMessage=new Errors();
+    		errorMessage.setError("The ID of Offer must not be null");
+    		error.setErrors(errorMessage);
+    	}
+    	if(offerDTO.getProduct()==null || offerDTO.getProduct().getId()==null) {
+    		OfferDTO error=new OfferDTO();
+    		Errors errorMessage=new Errors();
+    		errorMessage.setError("The ID of Product must not be null");
+    		error.setErrors(errorMessage);
+    	}
         Offer offer = new Offer(
                 offerDTO.getId(),
                 offerDTO.getDiscountPct(),
@@ -69,6 +85,11 @@ public class OfferService {
                 saved.getProduct().getName(),
                 saved.getProduct().getPrice()
         ));
+    }
+    public String delete(Long id) {
+    	offerRepository.deleteById(id);
+    	return "The product has been deleted";
+    	
     }
 
 }
